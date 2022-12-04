@@ -31,5 +31,5 @@ pub fn run() {
         .count();
 
     println!("Day04a: {}", overlap_completely);
-    println!("Day04ab: {}", overlap_some);
+    println!("Day04b: {}", overlap_some);
 }
