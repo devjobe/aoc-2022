@@ -3,6 +3,7 @@
 #![feature(array_windows)]
 #![feature(string_leak)]
 #![feature(map_many_mut)]
+#![feature(drain_filter)]
 
 pub mod day01;
 pub mod day02;
@@ -18,6 +19,7 @@ pub mod day11;
 pub mod day12;
 pub mod day13;
 pub mod day14;
+pub mod day15;
 
 struct SplitParagraphs<'a> {
     input: &'a str,
