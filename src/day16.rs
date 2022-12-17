@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 pub fn run() {
     let input = include_str!("../input/day16.txt");
 
@@ -94,8 +96,13 @@ pub fn run() {
         (last, costs)
     };
 
-    fn dfs(idx: usize, time: usize, visited: usize, costs: &Vec<Vec<Option<Edge>>>) -> usize {
+
+    fn dfs(idx: usize, time: usize, visited: usize, costs: &Vec<Vec<Option<Edge>>>, cache: &mut HashMap<(usize, usize, usize), usize>) -> usize {        
         let visited = visited | 1 << idx;
+        if let Some(&best) = cache.get(&(idx, time, visited)) { 
+            return best; 
+        }
+
         let mut best = 0;
         for (current_idx, edge) in costs[idx].iter().enumerate() {
             if (visited & (1 << current_idx)) != 0 {
@@ -107,20 +114,24 @@ pub fn run() {
                 }
                 let remaining_time = time - *cost;
                 let pressure = *flow * remaining_time;
-                best = best.max(dfs(current_idx, remaining_time, visited, costs) + pressure);
-            }
+                best = best.max(dfs(current_idx, remaining_time, visited, costs, cache) + pressure);
+            }            
         }
+
+        cache.insert((idx, time, visited), best);
         best
     }
 
     assert!(costs.len() <= 64);
 
-    let max_release = dfs(start, 30, 0, &costs);
+
+    let mut cache = HashMap::with_capacity(1024 * 512);
+    let max_release = dfs(start, 30, 0, &costs, &mut cache);
     println!("Day16a: {}", max_release);
 
     let n = 1 << costs.len();
     let releases = (0..n)
-        .map(|visited| dfs(start, 26, visited, &costs))
+        .map(|visited| dfs(start, 26, visited, &costs, &mut cache))
         .collect::<Vec<usize>>();
 
     let max_release2 = releases
@@ -132,3 +143,7 @@ pub fn run() {
     println!("Day16b: {}", max_release2);
 }
 
+#[test]
+fn test_it() {
+    run();
+}
