@@ -142,8 +142,3 @@ pub fn run() {
         .unwrap_or_default();
     println!("Day16b: {}", max_release2);
 }
-
-#[test]
-fn test_it() {
-    run();
-}
