@@ -91,5 +91,5 @@ pub fn run() {
         }
     }
 
-    println!("Day14a: {}", rocks.len()-initial);
+    println!("Day14b: {}", rocks.len()-initial);
 }

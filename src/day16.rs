@@ -114,7 +114,7 @@ pub fn run() {
     }
 
     assert!(costs.len() <= 64);
-    
+
     let max_release = dfs(start, 30, 0, &costs);
     println!("Day16a: {}", max_release);
 
@@ -129,6 +129,6 @@ pub fn run() {
         .map(|(a, b)| a + b)
         .max()
         .unwrap_or_default();
-    println!("Day16a: {}", max_release2);
+    println!("Day16b: {}", max_release2);
 }
 
