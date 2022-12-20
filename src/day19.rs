@@ -73,7 +73,7 @@ pub fn run() {
             self.production[index] += 1;
         }
 
-        pub fn best_case(&self, bp: &Blueprint, time: usize) -> usize {
+        pub fn best_case(&self, _bp: &Blueprint, time: usize) -> usize {
             if time > 1 {
                 (time * (time - 1)) / 2 + self.res[3]
             } else {
@@ -116,13 +116,7 @@ pub fn run() {
             }
             true
         }
-
-        fn buildable(&self, sim: &Sim) -> [Option<usize>; 4] {
-            std::array::from_fn(|i| {
-                self.build_time(sim, i)
-            })
-        }
-
+        
         fn build_time(&self, sim: &Sim, i: usize) -> Option<usize> {
             if !self.is_buildable(sim, i) {
                 return None;
@@ -165,7 +159,7 @@ pub fn run() {
     }
 
     fn max_production(
-        mut sim: Sim,
+        sim: Sim,
         time: usize,
         bp: &Blueprint,
         cache: &mut HashMap<(Sim, usize), usize>,
@@ -229,9 +223,4 @@ pub fn run() {
         .product::<usize>();
 
     println!("Day19b: {}", answer);
-}
-
-#[test]
-fn test_it() {
-    run();
 }
