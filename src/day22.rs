@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 pub fn run1(input: &'static str) {
     let (map_input, path_input) = {
         let mut it = crate::split_paragraphs(input);
@@ -148,7 +146,7 @@ pub fn run1(input: &'static str) {
     );
 }
 
-pub fn run(input: &'static str) {
+pub fn run2(input: &'static str) {
     let (map_input, path_input) = {
         let mut it = crate::split_paragraphs(input);
         (it.next().unwrap(), it.next().unwrap())
@@ -258,98 +256,6 @@ pub fn run(input: &'static str) {
         })
         .collect::<Vec<_>>();
 
-    let faces: HashMap<(usize, usize), &Chunk> = grid
-        .iter()
-        .flatten()
-        .filter_map(|x| x.as_ref())
-        .map(|x| (x.position, x))
-        .collect();
-
-    let height = map.len();
-
-    let mut outline = HashMap::new();
-    for &chunk in faces.values() {
-        let (x, y) = chunk.position;
-        let edges = [
-            ((x + side, y), RIGHT),
-            ((x, y + side), DOWN),
-            ((x + width - side, y), LEFT),
-            ((x, y + height - side), UP),
-        ];
-
-        let grid_pos = (x / side, y / side);
-
-        for (p, edge) in edges.into_iter() {
-            {
-                let (x, y) = p;
-                let x = x % width;            
-                let y = y % height;
-                
-                if faces.contains_key(&(x, y)) {
-                    continue;
-                }
-            }
-            
-            let (x, y) = grid_pos;
-            let (from, to) = match edge {
-                RIGHT => {
-                    ((x + 1, y), (x + 1, y + 1))
-                },
-                DOWN => {
-                    ((x + 1, y + 1), (x, y + 1))
-                },
-                LEFT => {
-                    ((x, y + 1), (x, y))
-                },
-                UP => {
-                    ((x, y), (x + 1, y))
-                },
-                _ => unreachable!(),
-            };
-
-            println!("{grid_pos:?}: {edge}");
-
-            let res = outline.insert((from, to), (edge, chunk));
-            assert!(res.is_none());
-        }
-    }
-
-    while !outline.is_empty() {
-        for (&key, &(edge, chunk)) in outline.iter() {
-            let (x, y) = key.1;
-
-            let looking_for = match edge {
-                RIGHT => {
-                    // ((x + 1, y), (x + 1, y + 1))
-                    ((x, y), (x + 1, y))
-                },
-                DOWN => {
-                    ((x + 1, y + 1), (x, y + 1))
-                },
-                LEFT => {
-                    ((x, y + 1), (x, y))
-                },
-                UP => {
-                    ((x, y), (x + 1, y))
-                },
-                _ => unreachable!(),
-            };
-
-            if let Some(&(other_edge, other_chunk)) = outline.get(&looking_for) {
-                let (x, y) = chunk.position;
-                let a = (x / side, y / side);
-                let (x, y) = other_chunk.position;
-                let b = (x / side, y / side);
-
-
-                
-                break;
-            }
-        }
-
-        break;
-    }
-
     let start = (
         map[0].1.iter().position(|x| *x == OPEN).unwrap() + map[0].0,
         0usize,
@@ -360,7 +266,6 @@ pub fn run(input: &'static str) {
     const LEFT: i32 = 2;
     const UP: i32 = 3;
 
-    // let mut facing = RIGHT;
     let mut facing = UP;
     let mut position = start;
 
@@ -412,7 +317,6 @@ pub fn run(input: &'static str) {
         let mut offset = walk.abs() as usize;
 
         while offset > 0 {
-            // println!("{facing}: {offset}");
             match facing {
                 RIGHT => {
                     let (start, row) = map[position.1];
@@ -485,11 +389,6 @@ pub fn run(input: &'static str) {
                 };
                 */
 
-                // 0 x x
-                // 0 x 0
-                // x x 0
-                // x 0 0
-
                 let res = match (facing, grid_pos) {
                     (LEFT, (1, 0)) => map_open((0, 2), (0, side - 1 - y), RIGHT),
                     (UP, (1, 0)) => map_open((0, 3), (0, x), RIGHT),
@@ -517,14 +416,11 @@ pub fn run(input: &'static str) {
                     offset -= 1;
                     position = pos;
                     facing = face;
-                    // println!("Cube: {position:?}");
                 } else {
                     break;
                 }
             }
         }
-
-        // println!("Position: {position:?}");
     }
 
     println!(
@@ -533,9 +429,8 @@ pub fn run(input: &'static str) {
     );
 }
 
-#[test]
-fn test_it() {
+pub fn run() {
     let input = include_str!("../input/day22.txt");
     run1(input);
-    run(input);
+    run2(input);
 }
